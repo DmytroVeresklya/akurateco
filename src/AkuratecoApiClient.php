@@ -15,12 +15,12 @@ class AkuratecoApiClient
     /**
      * @var string
      */
-    protected string $publicKey;
+    private string $publicKey;
 
     /**
      * @var string
      */
-    protected string $clientPass;
+    private string $clientPass;
 
     /**
      * @var SaleEndpoint
@@ -43,19 +43,7 @@ class AkuratecoApiClient
         string $publicKey,
         string $clientPass
     ): AkuratecoApiClient {
-        $publicKey = trim($publicKey);
-
-        $isValidPublicKey = preg_match(
-            '/^[a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12}$/i',
-            $publicKey
-        );
-        if (!$isValidPublicKey) {
-            throw new ApiException("Invalid Public Key : '{$publicKey}'");
-        }
-
-        if (strlen($clientPass) !== 32) {
-            throw new ApiException("Invalid Client Pass :'{$clientPass}'");
-        }
+        $this->validateKeys($publicKey, $clientPass);
 
         $this->publicKey  = $publicKey;
         $this->clientPass = $clientPass;
@@ -92,9 +80,11 @@ class AkuratecoApiClient
         if (strlen($data['order_id']) > 255 || null === $data['order_id']) {
             $message .= 'Invalid order_id ';
         }
+
         if (!preg_match('/^[1-9]\d*\.\d{2}$/', $data['order_amount'])) {
             $message .= 'Invalid order_amount ';
         }
+
         if (!preg_match('/^[a-zA-Z]{3}$/', $data['order_currency'])) {
             $message .= 'Invalid order_currency ';
         }
@@ -107,6 +97,7 @@ class AkuratecoApiClient
         } else {
             $email = $data['payer_email'];
         }
+
         if (null === $data['card_number']) {
             $message .= 'Invalid card number ';
         } else {
@@ -130,11 +121,39 @@ class AkuratecoApiClient
      */
     private function _createHash(string $email, string $cardNumber): string
     {
+        $reversedEmail = strrev($email);
+        $reversedCard = strrev(substr($cardNumber, 0, 6) . substr($cardNumber, -4));
+
         return md5(
             strtoupper(
-                strrev($email) . $this->clientPass .
-                strrev(substr($cardNumber, 0, 6) . substr($cardNumber, -4))
+                $reversedEmail . $this->clientPass .
+                $reversedCard
             )
         );
+    }
+
+    /**
+     * @param string $publicKey
+     * @param string $clientPass
+     *
+     * @return void
+     * @throws ApiException
+     */
+    private function validateKeys(string $publicKey, string $clientPass): void
+    {
+        $publicKey = trim($publicKey);
+
+        $isPublicKeyValid = preg_match(
+            '/^[a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12}$/i',
+            $publicKey
+        );
+
+        if (!$isPublicKeyValid) {
+            throw new ApiException("Invalid Public Key : '{$publicKey}'");
+        }
+
+        if (strlen($clientPass) !== 32) {
+            throw new ApiException("Invalid Client Pass :'{$clientPass}'");
+        }
     }
 }
