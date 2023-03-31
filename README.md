@@ -17,11 +17,11 @@ PHP >= 7.4
 ## Composer Installation
 By far the easiest way to install is to require it with Composer.
 ```
-composer require dimaveresklia/akurateco:^1.0
+composer require dimaveresklia/akurateco:dev-main
 
 {
     "require": {
-        "dimaveresklia/akurateco": "^1.0"
+        "dimaveresklia/akurateco": "dev-main"
     }
 }
 ```
