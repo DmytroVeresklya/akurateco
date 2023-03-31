@@ -1,0 +1,36 @@
+{
+    "name": "dimaveresklia/akurateco",
+    "autoload": {
+        "psr-4": {
+            "Dimaveresklia\\Akurateco\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Dimaveresklia\\Akurateco\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Dmytro",
+            "email": "dveresklya@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "squizlabs/php_codesniffer": "*",
+        "pdepend/pdepend": "^2.0@dev"
+    },
+
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../akurateco"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.0",
+      "ext-json": "*"
+    }
+}
